@@ -7,8 +7,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(builder.Configuration);
 
-builder.Services.AddAuthorization();
-
+builder.Services.ConfigureAuthorization();
 builder.Services.ConfigureAuthentication(builder.Configuration);
 builder.Services.ConfigureRepopsitories();
 builder.Services.ConfigureServices();

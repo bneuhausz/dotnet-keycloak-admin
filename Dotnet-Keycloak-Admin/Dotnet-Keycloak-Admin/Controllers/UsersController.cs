@@ -19,7 +19,15 @@ public class UsersController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var token = await _keycloakAdminService.Test();
-        return Ok(token);
+        await Task.Delay(1);
+        return Ok("authorized");
+    }
+
+    [Authorize(Policy = "UserManagerPolicy")]
+    [HttpGet("manage-users")]
+    public async Task<IActionResult> GetAdmin()
+    {
+        await Task.Delay(1);
+        return Ok("authorized admin");
     }
 }

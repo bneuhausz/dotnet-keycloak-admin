@@ -69,9 +69,38 @@ internal static class ServiceCollectionExtensions
                 o.MetadataAddress = configuration["Authentication:MetadataAddress"]!;
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer = configuration["Authentication:Issuer"]
+                    ValidIssuer = configuration["Authentication:Issuer"],
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true
                 };
             });
+    }
+
+    internal static void ConfigureAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("UserManagerPolicy", policy =>
+            {
+                policy.RequireAssertion(context =>
+                {
+                    var resourceAccessClaim = context.User.FindFirst("resource_access");
+                    if (resourceAccessClaim != null)
+                    {
+                        var resourceAccess = System.Text.Json.JsonDocument.Parse(resourceAccessClaim.Value);
+
+                        if (resourceAccess.RootElement.TryGetProperty("dotnet-public", out var clientRoles) &&
+                            clientRoles.TryGetProperty("roles", out var rolesArray))
+                        {
+                            return rolesArray.EnumerateArray()
+                                .Any(role => role.GetString() == "user-manager");
+                        }
+                    }
+                    return false;
+                });
+            });
+        });
     }
 
     internal static void ConfigureRepopsitories(this IServiceCollection services)
