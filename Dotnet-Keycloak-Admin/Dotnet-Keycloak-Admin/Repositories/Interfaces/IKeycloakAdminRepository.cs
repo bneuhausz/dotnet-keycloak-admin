@@ -1,6 +1,8 @@
-﻿namespace Dotnet_Keycloak_Admin.Repositories.Interfaces;
+﻿using Dotnet_Keycloak_Admin.Dtos.User;
+
+namespace Dotnet_Keycloak_Admin.Repositories.Interfaces;
 
 public interface IKeycloakAdminRepository
 {
-    Task<string> Test();
+    Task<List<GetUserDto>> GetUsersAsync();
 }

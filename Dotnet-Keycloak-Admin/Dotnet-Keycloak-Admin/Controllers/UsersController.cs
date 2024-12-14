@@ -1,4 +1,5 @@
-﻿using Dotnet_Keycloak_Admin.Services.Interfaces;
+﻿using Dotnet_Keycloak_Admin.Dtos.User;
+using Dotnet_Keycloak_Admin.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,9 +26,10 @@ public class UsersController : ControllerBase
 
     [Authorize(Policy = "UserManagerPolicy")]
     [HttpGet("manage-users")]
+    [ProducesResponseType<List<GetUserDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAdmin()
     {
-        await Task.Delay(1);
-        return Ok("authorized admin");
+        var res = await _keycloakAdminService.GetUsersAsync();
+        return Ok(res);
     }
 }
