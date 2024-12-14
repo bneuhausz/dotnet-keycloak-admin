@@ -3,7 +3,9 @@ using Dotnet_Keycloak_Admin.Repositories;
 using Dotnet_Keycloak_Admin.Repositories.Interfaces;
 using Dotnet_Keycloak_Admin.Services;
 using Dotnet_Keycloak_Admin.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace Dotnet_Keycloak_Admin.Extensions;
@@ -55,6 +57,21 @@ internal static class ServiceCollectionExtensions
         });
 
         return services;
+    }
+
+    internal static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata = false;
+                o.Audience = configuration["Authentication:Audience"];
+                o.MetadataAddress = configuration["Authentication:MetadataAddress"]!;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = configuration["Authentication:Issuer"]
+                };
+            });
     }
 
     internal static void ConfigureRepopsitories(this IServiceCollection services)
