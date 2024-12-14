@@ -1,0 +1,8 @@
+*.vs/
+*obj/
+*bin/
+*dist/
+*pubxml.user
+*csproj.user
+.sonarqube
+*/coverage.xml
