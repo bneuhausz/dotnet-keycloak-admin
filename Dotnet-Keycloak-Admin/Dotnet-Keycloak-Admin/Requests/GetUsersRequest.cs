@@ -1,6 +1,6 @@
 ﻿namespace Nbx.DotnetKeycloak.Admin.Requests;
 
-public class GetUsersRequest
+public record GetUsersRequest
 {
     public int First { get; set; }
     public int Max { get; set; } = 10;

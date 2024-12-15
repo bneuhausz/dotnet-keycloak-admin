@@ -1,4 +1,5 @@
-﻿using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
+﻿using Nbx.DotnetKeycloak.Admin.Dtos.User;
+using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
 using Nbx.DotnetKeycloak.Admin.Requests;
 using Nbx.DotnetKeycloak.Admin.Responses;
 using Nbx.DotnetKeycloak.Admin.Services.Interfaces;
@@ -40,5 +41,9 @@ public class KeycloakAdminService : IKeycloakAdminService
 
     public async Task ToggleUserEnabledAsync(string id) {
         await _keycloakAdminRepository.ToggleUserEnabledAsync(id);
+    }
+
+    public async Task ResetPassword(string id, CredentialDto credential) {
+        await _keycloakAdminRepository.ResetPassword(id, credential);
     }
 }

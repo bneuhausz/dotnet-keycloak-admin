@@ -40,4 +40,12 @@ public class UsersController : ControllerBase
         await _keycloakAdminService.ToggleUserEnabledAsync(id);
         return NoContent();
     }
+
+    [HttpPut("{id}/reset-password")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> ResetPassword(string id, [FromBody] ResetPasswordRequest req)
+    {
+        await _keycloakAdminService.ResetPassword(id, req.Credential);
+        return NoContent();
+    }
 }

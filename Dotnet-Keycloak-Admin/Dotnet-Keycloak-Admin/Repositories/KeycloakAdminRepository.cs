@@ -70,6 +70,13 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
         res.EnsureSuccessStatusCode();
     }
 
+    public async Task ResetPassword(string id, CredentialDto credential)
+    {
+        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/reset-password", HttpMethod.Put, credential);
+        var res = await _httpClient.SendAsync(req);
+        res.EnsureSuccessStatusCode();
+    }
+
     private async Task<HttpRequestMessage> CreateRequest(string endpoint, HttpMethod httpMethod, object? content = null)
     {
         var accessToken = await GetAccessToken();

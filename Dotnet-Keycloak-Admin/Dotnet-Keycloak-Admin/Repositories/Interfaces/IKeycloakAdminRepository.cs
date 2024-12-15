@@ -10,4 +10,5 @@ public interface IKeycloakAdminRepository
     Task<UserRepresentation?> GetUserByIdAsync(string id);
     Task CreateUserAsync(CreateUserDto user);
     Task ToggleUserEnabledAsync(string id);
+    Task ResetPassword(string id, CredentialDto credential);
 }
