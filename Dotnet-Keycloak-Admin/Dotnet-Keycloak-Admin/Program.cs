@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Builder;
 using Nbx.DotnetKeycloak.Admin.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGenWithAuth(builder.Configuration);

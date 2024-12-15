@@ -23,7 +23,7 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
     public async Task<int> GetUserCountAsync(string username)
     {
         var url = $"admin/realms/{_keycloakConfig.Realm}/users/count?q=type:regular&username={username}";
-        var req = await CreateRequest(url, HttpMethod.Get);
+        var req = CreateRequest(url, HttpMethod.Get);
         var res = await _httpClient.SendAsync(req);
         var resContent = await res.Content.ReadAsStringAsync();
         var cnt = JsonSerializer.Deserialize<int>(resContent);
@@ -32,7 +32,7 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
 
     public async Task<List<GetUserDto>> GetUsersAsync(int first, int max, string username)
     {
-        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users?q=type:regular&first={first}&max={max}&username={username}", HttpMethod.Get);
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users?q=type:regular&first={first}&max={max}&username={username}", HttpMethod.Get);
         var res = await _httpClient.SendAsync(req);
         var resContent = await res.Content.ReadAsStringAsync();
         var users = JsonSerializer.Deserialize<List<GetUserDto>>(resContent, CamelCaseJsonSerializer);
@@ -41,7 +41,7 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
 
     public async Task<UserRepresentation?> GetUserByIdAsync(string id)
     {
-        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}", HttpMethod.Get);
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}", HttpMethod.Get);
         var res = await _httpClient.SendAsync(req);
         res.EnsureSuccessStatusCode();
         var resContent = await res.Content.ReadAsStringAsync();
@@ -51,7 +51,7 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
 
     public async Task CreateUserAsync(CreateUserDto user)
     {
-        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users", HttpMethod.Post, user);
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users", HttpMethod.Post, user);
         var res = await _httpClient.SendAsync(req);
         res.EnsureSuccessStatusCode();
     }
@@ -65,21 +65,20 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
             throw new Exception("User not found");
         }
         user.Enabled = !user.Enabled;
-        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}", HttpMethod.Put, user);
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}", HttpMethod.Put, user);
         var res = await _httpClient.SendAsync(req);
         res.EnsureSuccessStatusCode();
     }
 
     public async Task ResetPassword(string id, CredentialDto credential)
     {
-        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/reset-password", HttpMethod.Put, credential);
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/reset-password", HttpMethod.Put, credential);
         var res = await _httpClient.SendAsync(req);
         res.EnsureSuccessStatusCode();
     }
 
-    private async Task<HttpRequestMessage> CreateRequest(string endpoint, HttpMethod httpMethod, object? content = null)
+    private HttpRequestMessage CreateRequest(string endpoint, HttpMethod httpMethod, object? content = null)
     {
-        var accessToken = await GetAccessToken();
         var uri = $"{_httpClient.BaseAddress}{endpoint}";
         var req = new HttpRequestMessage()
         {
@@ -92,27 +91,6 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
             req.Content = JsonContent.Create(content, options: CamelCaseJsonSerializer);
         }
 
-        req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
         return req;
-    }
-
-    private async Task<string> GetAccessToken()
-    {
-        var request = new HttpRequestMessage(HttpMethod.Post, $"{_httpClient.BaseAddress}/realms/{_keycloakConfig.Realm}/protocol/openid-connect/token");
-        request.Content = new FormUrlEncodedContent(new Dictionary<string, string>
-        {
-            ["client_id"] = _keycloakConfig.ClientId,
-            ["client_secret"] = _keycloakConfig.ClientSecret,
-            ["grant_type"] = "client_credentials"
-        });
-
-        var response = await _httpClient.SendAsync(request);
-        var responseContent = await response.Content.ReadAsStringAsync();
-
-        using JsonDocument document = JsonDocument.Parse(responseContent);
-        JsonElement root = document.RootElement;
-        string accessToken = root.GetProperty("access_token").GetString()!;
-        return accessToken;
     }
 }

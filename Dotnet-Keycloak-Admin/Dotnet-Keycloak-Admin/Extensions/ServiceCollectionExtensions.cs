@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Nbx.DotnetKeycloak.Admin.Helpers;
 
 namespace Nbx.DotnetKeycloak.Admin.Extensions;
 
@@ -124,6 +125,8 @@ internal static class ServiceCollectionExtensions
         {
             var keycloakConfig = serviceProvider.GetRequiredService<IOptions<KeycloakAdminOptions>>().Value;
             client.BaseAddress = new Uri(keycloakConfig.BaseAddress);
-        });
+        }).AddHttpMessageHandler<KeycloakAdminTokenHandler>();
+
+        services.AddScoped<KeycloakAdminTokenHandler>();
     }
 }
