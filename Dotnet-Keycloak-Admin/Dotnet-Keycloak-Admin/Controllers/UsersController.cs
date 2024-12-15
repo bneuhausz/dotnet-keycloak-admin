@@ -26,7 +26,8 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<CreatedResult> CreateUser([FromBody] CreateUserRequest req)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> CreateUser([FromBody] CreateUserRequest req)
     {
         await _keycloakAdminService.CreateUserAsync(req);
         return Created();
