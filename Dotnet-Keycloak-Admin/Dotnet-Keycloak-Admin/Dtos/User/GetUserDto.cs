@@ -1,3 +1,3 @@
-﻿namespace Dotnet_Keycloak_Admin.Dtos.User;
+﻿namespace Nbx.DotnetKeycloak.Admin.Dtos.User;
 
 public record GetUserDto(string Id, string Username, bool Enabled);

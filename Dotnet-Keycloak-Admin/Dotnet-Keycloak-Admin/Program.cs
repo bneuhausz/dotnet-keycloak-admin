@@ -1,4 +1,4 @@
-using Dotnet_Keycloak_Admin.Extensions;
+using Nbx.DotnetKeycloak.Admin.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

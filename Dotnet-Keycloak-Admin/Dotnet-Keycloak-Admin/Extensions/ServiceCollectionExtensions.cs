@@ -1,14 +1,14 @@
-﻿using Dotnet_Keycloak_Admin.Configuration;
-using Dotnet_Keycloak_Admin.Repositories;
-using Dotnet_Keycloak_Admin.Repositories.Interfaces;
-using Dotnet_Keycloak_Admin.Services;
-using Dotnet_Keycloak_Admin.Services.Interfaces;
+﻿using Nbx.DotnetKeycloak.Admin.Configuration;
+using Nbx.DotnetKeycloak.Admin.Repositories;
+using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
+using Nbx.DotnetKeycloak.Admin.Services;
+using Nbx.DotnetKeycloak.Admin.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-namespace Dotnet_Keycloak_Admin.Extensions;
+namespace Nbx.DotnetKeycloak.Admin.Extensions;
 
 internal static class ServiceCollectionExtensions
 {

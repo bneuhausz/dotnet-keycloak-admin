@@ -1,11 +1,11 @@
-﻿using Dotnet_Keycloak_Admin.Configuration;
-using Dotnet_Keycloak_Admin.Dtos.User;
-using Dotnet_Keycloak_Admin.Repositories.Interfaces;
+﻿using Nbx.DotnetKeycloak.Admin.Configuration;
+using Nbx.DotnetKeycloak.Admin.Dtos.User;
+using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
-namespace Dotnet_Keycloak_Admin.Repositories;
+namespace Nbx.DotnetKeycloak.Admin.Repositories;
 
 public class KeycloakAdminRepository : IKeycloakAdminRepository
 {
@@ -19,18 +19,19 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
         _keycloakConfig = keycloakConfig.Value;
     }
 
-    public async Task<int> GetUserCountAsync()
+    public async Task<int> GetUserCountAsync(string username)
     {
-        var req = await CreateRequest($"/admin/realms/{_keycloakConfig.Realm}/users/count", HttpMethod.Get);
+        var url = $"admin/realms/{_keycloakConfig.Realm}/users/count?q=type:regular&username={username}";
+        var req = await CreateRequest(url, HttpMethod.Get);
         var res = await _httpClient.SendAsync(req);
         var resContent = await res.Content.ReadAsStringAsync();
         var cnt = JsonSerializer.Deserialize<int>(resContent);
         return cnt;
     }
 
-    public async Task<List<GetUserDto>> GetUsersAsync()
+    public async Task<List<GetUserDto>> GetUsersAsync(int first, int max, string username)
     {
-        var req = await CreateRequest($"/admin/realms/{_keycloakConfig.Realm}/users", HttpMethod.Get);
+        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users?q=type:regular&first={first}&max={max}&username={username}", HttpMethod.Get);
         var res = await _httpClient.SendAsync(req);
         var resContent = await res.Content.ReadAsStringAsync();
         var users = JsonSerializer.Deserialize<List<GetUserDto>>(resContent, CamelCaseJsonSerializer);

@@ -1,4 +1,4 @@
-﻿namespace Dotnet_Keycloak_Admin.Configuration;
+﻿namespace Nbx.DotnetKeycloak.Admin.Configuration;
 
 public class KeycloakAdminOptions
 {

@@ -1,9 +1,9 @@
-﻿using Dotnet_Keycloak_Admin.Dtos.User;
+﻿using Nbx.DotnetKeycloak.Admin.Dtos.User;
 
-namespace Dotnet_Keycloak_Admin.Repositories.Interfaces;
+namespace Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
 
 public interface IKeycloakAdminRepository
 {
-    Task<int> GetUserCountAsync();
-    Task<List<GetUserDto>> GetUsersAsync();
+    Task<int> GetUserCountAsync(string username);
+    Task<List<GetUserDto>> GetUsersAsync(int first, int max, string username);
 }

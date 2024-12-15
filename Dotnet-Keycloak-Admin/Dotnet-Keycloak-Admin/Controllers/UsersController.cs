@@ -1,9 +1,10 @@
-﻿using Dotnet_Keycloak_Admin.Dtos.User;
-using Dotnet_Keycloak_Admin.Services.Interfaces;
+﻿using Nbx.DotnetKeycloak.Admin.Requests;
+using Nbx.DotnetKeycloak.Admin.Responses;
+using Nbx.DotnetKeycloak.Admin.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Dotnet_Keycloak_Admin.Controllers;
+namespace Nbx.DotnetKeycloak.Admin.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,19 +18,10 @@ public class UsersController : ControllerBase
         _keycloakAdminService = keycloakAdminService;
     }
 
-    [HttpGet("count")]
-    [ProducesResponseType<int>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Count()
-    {
-        var res = await _keycloakAdminService.GetUserCountAsync();
-        return Ok(res);
-    }
-
     [HttpGet]
-    [ProducesResponseType<List<GetUserDto>>(StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAdmin()
+    public async Task<ActionResult<GetUsersResponse>> GetUsers([FromQuery] GetUsersRequest req)
     {
-        var res = await _keycloakAdminService.GetUsersAsync();
+        var res = await _keycloakAdminService.GetUsersAsync(req);
         return Ok(res);
     }
 }

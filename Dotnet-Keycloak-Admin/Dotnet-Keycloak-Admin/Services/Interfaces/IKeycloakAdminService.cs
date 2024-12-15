@@ -1,9 +1,10 @@
-﻿using Dotnet_Keycloak_Admin.Dtos.User;
+﻿using Nbx.DotnetKeycloak.Admin.Dtos.User;
+using Nbx.DotnetKeycloak.Admin.Requests;
+using Nbx.DotnetKeycloak.Admin.Responses;
 
-namespace Dotnet_Keycloak_Admin.Services.Interfaces;
+namespace Nbx.DotnetKeycloak.Admin.Services.Interfaces;
 
 public interface IKeycloakAdminService
 {
-    Task<int> GetUserCountAsync();
-    Task<List<GetUserDto>> GetUsersAsync();
+    Task<GetUsersResponse> GetUsersAsync(GetUsersRequest req);
 }

@@ -1,8 +1,10 @@
-﻿using Dotnet_Keycloak_Admin.Dtos.User;
-using Dotnet_Keycloak_Admin.Repositories.Interfaces;
-using Dotnet_Keycloak_Admin.Services.Interfaces;
+﻿using Nbx.DotnetKeycloak.Admin.Dtos.User;
+using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
+using Nbx.DotnetKeycloak.Admin.Requests;
+using Nbx.DotnetKeycloak.Admin.Responses;
+using Nbx.DotnetKeycloak.Admin.Services.Interfaces;
 
-namespace Dotnet_Keycloak_Admin.Services;
+namespace Nbx.DotnetKeycloak.Admin.Services;
 
 public class KeycloakAdminService : IKeycloakAdminService
 {
@@ -13,13 +15,22 @@ public class KeycloakAdminService : IKeycloakAdminService
         _keycloakAdminRepository = keycloakAdminRepository;
     }
 
-    public async Task<int> GetUserCountAsync()
+    public async Task<GetUsersResponse> GetUsersAsync(GetUsersRequest req)
     {
-        return await _keycloakAdminRepository.GetUserCountAsync();
-    }
+        var getUserCountTask = _keycloakAdminRepository.GetUserCountAsync(req.Username);
+        var getUsersTask = _keycloakAdminRepository.GetUsersAsync(req.First, req.Max, req.Username);
 
-    public async Task<List<GetUserDto>> GetUsersAsync()
-    {
-        return await _keycloakAdminRepository.GetUsersAsync();
+        await Task.WhenAll(getUsersTask, getUserCountTask);
+
+        var users = await getUsersTask;
+        var cnt = await getUserCountTask;
+
+        var res = new GetUsersResponse
+        {
+            Users = users,
+            Count = cnt
+        };
+
+        return res;
     }
 }
