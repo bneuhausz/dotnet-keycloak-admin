@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Dotnet_Keycloak_Admin</RootNamespace>
+    <RootNamespace>Nbx.DotnetKeycloak.Admin</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

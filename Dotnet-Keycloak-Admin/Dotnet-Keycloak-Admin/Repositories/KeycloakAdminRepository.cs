@@ -38,7 +38,14 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
         return users ?? [];
     }
 
-    private async Task<HttpRequestMessage> CreateRequest(string endpoint, HttpMethod httpMethod)
+    public async Task CreateUserAsync(CreateUserDto user)
+    {
+        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users", HttpMethod.Post, user);
+        var res = await _httpClient.SendAsync(req);
+        res.EnsureSuccessStatusCode();
+    }
+
+    private async Task<HttpRequestMessage> CreateRequest(string endpoint, HttpMethod httpMethod, object? content = null)
     {
         var accessToken = await GetAccessToken();
         var uri = $"{_httpClient.BaseAddress}{endpoint}";
@@ -47,6 +54,11 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
             RequestUri = new Uri(uri),
             Method = httpMethod
         };
+
+        if (content != null)
+        {
+            req.Content = JsonContent.Create(content, options: CamelCaseJsonSerializer);
+        }
 
         req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 

@@ -33,4 +33,9 @@ public class KeycloakAdminService : IKeycloakAdminService
 
         return res;
     }
+
+    public async Task CreateUserAsync(CreateUserRequest req)
+    {
+        await _keycloakAdminRepository.CreateUserAsync(req.User);
+    }
 }

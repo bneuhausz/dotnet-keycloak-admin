@@ -7,4 +7,5 @@ namespace Nbx.DotnetKeycloak.Admin.Services.Interfaces;
 public interface IKeycloakAdminService
 {
     Task<GetUsersResponse> GetUsersAsync(GetUsersRequest req);
+    Task CreateUserAsync(CreateUserRequest req);
 }
