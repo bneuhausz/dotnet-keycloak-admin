@@ -19,6 +19,15 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
         _keycloakConfig = keycloakConfig.Value;
     }
 
+    public async Task<int> GetUserCountAsync()
+    {
+        var req = await CreateRequest($"/admin/realms/{_keycloakConfig.Realm}/users/count", HttpMethod.Get);
+        var res = await _httpClient.SendAsync(req);
+        var resContent = await res.Content.ReadAsStringAsync();
+        var cnt = JsonSerializer.Deserialize<int>(resContent);
+        return cnt;
+    }
+
     public async Task<List<GetUserDto>> GetUsersAsync()
     {
         var req = await CreateRequest($"/admin/realms/{_keycloakConfig.Realm}/users", HttpMethod.Get);

@@ -7,7 +7,7 @@ namespace Dotnet_Keycloak_Admin.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[Authorize(Policy = "UserManagerPolicy")]
 public class UsersController : ControllerBase
 {
     private readonly IKeycloakAdminService _keycloakAdminService;
@@ -17,15 +17,15 @@ public class UsersController : ControllerBase
         _keycloakAdminService = keycloakAdminService;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get()
+    [HttpGet("count")]
+    [ProducesResponseType<int>(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Count()
     {
-        await Task.Delay(1);
-        return Ok("authorized");
+        var res = await _keycloakAdminService.GetUserCountAsync();
+        return Ok(res);
     }
 
-    [Authorize(Policy = "UserManagerPolicy")]
-    [HttpGet("manage-users")]
+    [HttpGet]
     [ProducesResponseType<List<GetUserDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAdmin()
     {

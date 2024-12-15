@@ -13,6 +13,11 @@ public class KeycloakAdminService : IKeycloakAdminService
         _keycloakAdminRepository = keycloakAdminRepository;
     }
 
+    public async Task<int> GetUserCountAsync()
+    {
+        return await _keycloakAdminRepository.GetUserCountAsync();
+    }
+
     public async Task<List<GetUserDto>> GetUsersAsync()
     {
         return await _keycloakAdminRepository.GetUsersAsync();
