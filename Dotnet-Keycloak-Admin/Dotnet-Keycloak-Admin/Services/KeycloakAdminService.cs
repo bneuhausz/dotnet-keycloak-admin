@@ -1,5 +1,4 @@
-﻿using Nbx.DotnetKeycloak.Admin.Dtos.User;
-using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
+﻿using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
 using Nbx.DotnetKeycloak.Admin.Requests;
 using Nbx.DotnetKeycloak.Admin.Responses;
 using Nbx.DotnetKeycloak.Admin.Services.Interfaces;
@@ -37,5 +36,9 @@ public class KeycloakAdminService : IKeycloakAdminService
     public async Task CreateUserAsync(CreateUserRequest req)
     {
         await _keycloakAdminRepository.CreateUserAsync(req.User);
+    }
+
+    public async Task ToggleUserEnabledAsync(string id) {
+        await _keycloakAdminRepository.ToggleUserEnabledAsync(id);
     }
 }

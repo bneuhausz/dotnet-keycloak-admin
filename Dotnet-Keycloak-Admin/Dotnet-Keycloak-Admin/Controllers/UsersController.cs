@@ -26,10 +26,18 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult> CreateUser([FromBody] CreateUserRequest req)
     {
         await _keycloakAdminService.CreateUserAsync(req);
-        return Created();
+        return StatusCode(201);
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> ToggleUserEnabled(string id)
+    {
+        await _keycloakAdminService.ToggleUserEnabledAsync(id);
+        return NoContent();
     }
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Builder;
 using Nbx.DotnetKeycloak.Admin.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseRouting();
 
 app.UseAuthentication();
 

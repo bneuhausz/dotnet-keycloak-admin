@@ -4,6 +4,7 @@ using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Nbx.DotnetKeycloak.Admin.Entities.Keycloak;
 
 namespace Nbx.DotnetKeycloak.Admin.Repositories;
 
@@ -38,9 +39,33 @@ public class KeycloakAdminRepository : IKeycloakAdminRepository
         return users ?? [];
     }
 
+    public async Task<UserRepresentation?> GetUserByIdAsync(string id)
+    {
+        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}", HttpMethod.Get);
+        var res = await _httpClient.SendAsync(req);
+        res.EnsureSuccessStatusCode();
+        var resContent = await res.Content.ReadAsStringAsync();
+        var user = JsonSerializer.Deserialize<UserRepresentation>(resContent, CamelCaseJsonSerializer);
+        return user;
+    }
+
     public async Task CreateUserAsync(CreateUserDto user)
     {
         var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users", HttpMethod.Post, user);
+        var res = await _httpClient.SendAsync(req);
+        res.EnsureSuccessStatusCode();
+    }
+
+    public async Task ToggleUserEnabledAsync(string id)
+    {
+        var user = await GetUserByIdAsync(id);
+        if (user == null)
+        {
+            //TODO: proper error handling
+            throw new Exception("User not found");
+        }
+        user.Enabled = !user.Enabled;
+        var req = await CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}", HttpMethod.Put, user);
         var res = await _httpClient.SendAsync(req);
         res.EnsureSuccessStatusCode();
     }
