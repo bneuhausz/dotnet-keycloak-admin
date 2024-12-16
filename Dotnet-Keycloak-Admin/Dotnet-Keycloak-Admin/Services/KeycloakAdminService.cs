@@ -8,9 +8,9 @@ namespace Nbx.DotnetKeycloak.Admin.Services;
 
 public class KeycloakAdminService : IKeycloakAdminService
 {
-    private readonly IKeycloakAdminRepository _keycloakAdminRepository;
+    private readonly IKeycloakAdminUserRepository _keycloakAdminRepository;
 
-    public KeycloakAdminService(IKeycloakAdminRepository keycloakAdminRepository)
+    public KeycloakAdminService(IKeycloakAdminUserRepository keycloakAdminRepository)
     {
         _keycloakAdminRepository = keycloakAdminRepository;
     }
@@ -45,5 +45,11 @@ public class KeycloakAdminService : IKeycloakAdminService
 
     public async Task ResetPassword(string id, CredentialDto credential) {
         await _keycloakAdminRepository.ResetPassword(id, credential);
+    }
+
+    public async Task<GetUserRolesResponse> GetUserRoles(string id)
+    {
+        var res = new GetUserRolesResponse(await _keycloakAdminRepository.GetUserRolesAsync(id));
+        return res;
     }
 }

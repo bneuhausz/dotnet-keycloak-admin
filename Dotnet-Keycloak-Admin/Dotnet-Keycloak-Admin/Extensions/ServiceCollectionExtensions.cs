@@ -106,7 +106,7 @@ internal static class ServiceCollectionExtensions
 
     internal static void ConfigureRepopsitories(this IServiceCollection services)
     {
-        services.AddScoped<IKeycloakAdminRepository, KeycloakAdminRepository>();
+        services.AddScoped<IKeycloakAdminUserRepository, KeycloakAdminUserRepository>();
     }
 
     internal static void ConfigureServices(this IServiceCollection services)
@@ -121,7 +121,7 @@ internal static class ServiceCollectionExtensions
 
     internal static void ConfigureHttpClients(this IServiceCollection services)
     {
-        services.AddHttpClient<IKeycloakAdminRepository, KeycloakAdminRepository>((serviceProvider, client) =>
+        services.AddHttpClient<IKeycloakAdminUserRepository, KeycloakAdminUserRepository>((serviceProvider, client) =>
         {
             var keycloakConfig = serviceProvider.GetRequiredService<IOptions<KeycloakAdminOptions>>().Value;
             client.BaseAddress = new Uri(keycloakConfig.BaseAddress);

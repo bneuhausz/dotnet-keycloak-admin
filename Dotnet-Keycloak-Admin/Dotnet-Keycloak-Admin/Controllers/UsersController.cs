@@ -48,4 +48,11 @@ public class UsersController : ControllerBase
         await _keycloakAdminService.ResetPassword(id, req.Credential);
         return NoContent();
     }
+
+    [HttpGet("{id}/roles")]
+    public async Task<ActionResult<GetUserRolesResponse>> GetUserRoles(string id)
+    {
+        var res = await _keycloakAdminService.GetUserRoles(id);
+        return Ok(res);
+    }
 }

@@ -7,4 +7,5 @@ public class KeycloakAdminOptions
     public required string ClientSecret { get; set; }
     public required string BaseAddress { get; set; }
     public required string Realm { get; set; }
+    public required string PublicClientId { get; set; }
 }
