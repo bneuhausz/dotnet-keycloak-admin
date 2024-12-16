@@ -43,13 +43,28 @@ public class KeycloakAdminService : IKeycloakAdminService
         await _keycloakAdminRepository.ToggleUserEnabledAsync(id);
     }
 
-    public async Task ResetPassword(string id, CredentialDto credential) {
+    public async Task ResetPasswordAsync(string id, CredentialDto credential) {
         await _keycloakAdminRepository.ResetPassword(id, credential);
     }
 
-    public async Task<GetUserRolesResponse> GetUserRoles(string id)
+    public async Task<GetUserRolesResponse> GetUserRoleMappingsAsync(string id)
     {
-        var res = new GetUserRolesResponse(await _keycloakAdminRepository.GetUserRolesAsync(id));
+        var client = await _keycloakAdminRepository.GetClientAsync();
+
+        var userRolesTask = _keycloakAdminRepository.GetUserClientRolesAsync(id, client.Id);
+        var availableRolesTask = _keycloakAdminRepository.GetAvailableClientRolesAsync(id, client.Id);
+
+        await Task.WhenAll(userRolesTask, availableRolesTask);
+
+        var userRoles = await userRolesTask;
+        var availableRoles = await availableRolesTask;
+
+        var userMappedRoles = userRoles.Select(r => { r.IsInRole = true; return r; })
+            .Concat(availableRoles.Select(r => { r.IsInRole = false; return r; }))
+            .OrderBy(r => r.Name)
+            .ToList();
+
+        var res = new GetUserRolesResponse(userMappedRoles);
         return res;
     }
 }

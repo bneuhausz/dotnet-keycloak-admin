@@ -78,20 +78,9 @@ public class KeycloakAdminUserRepository : IKeycloakAdminUserRepository
         res.EnsureSuccessStatusCode();
     }
 
-    //TODO: refactor this to return both the roles of the user and the availabe roles
-    public async Task<List<GetRoleDto>> GetUserRolesAsync(string id)
+    public async Task<GetClientDto> GetClientAsync()
     {
-        var client = await GetClientByClientIdAsync(_keycloakConfig.PublicClientId);
-        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/role-mappings/clients/{client.Id}", HttpMethod.Get);
-        var res = await _httpClient.SendAsync(req);
-        var resContent = await res.Content.ReadAsStringAsync();
-        var roles = JsonSerializer.Deserialize<List<GetRoleDto>>(resContent, CamelCaseJsonSerializer);
-        return roles ?? [];
-    }
-
-    public async Task<GetClientDto> GetClientByClientIdAsync(string clientId)
-    {
-        var clientReq = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/clients?clientId={clientId}", HttpMethod.Get);
+        var clientReq = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/clients?clientId={_keycloakConfig.PublicClientId}", HttpMethod.Get);
         var clientRes = await _httpClient.SendAsync(clientReq);
         clientRes.EnsureSuccessStatusCode();
 
@@ -101,12 +90,32 @@ public class KeycloakAdminUserRepository : IKeycloakAdminUserRepository
         if (client == null)
         {
             //TODO: proper error handling
-            throw new Exception($"Client with ID '{clientId}' not found.");
+            throw new Exception($"Client with ID '{_keycloakConfig.ClientId}' not found.");
         }
         else
         {
             return client;
         }
+    }
+
+    //TODO: refactor this to return both the roles of the user and the availabe roles
+    public async Task<List<GetRoleDto>> GetUserClientRolesAsync(string id, string clientId)
+    {
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/role-mappings/clients/{clientId}", HttpMethod.Get);
+        var res = await _httpClient.SendAsync(req);
+        var resContent = await res.Content.ReadAsStringAsync();
+        var roles = JsonSerializer.Deserialize<List<GetRoleDto>>(resContent, CamelCaseJsonSerializer);
+        return roles ?? [];
+    }
+
+    public async Task<List<GetRoleDto>> GetAvailableClientRolesAsync(string userId, string clientId)
+    {
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{userId}/role-mappings/clients/{clientId}/available", HttpMethod.Get);
+        var res = await _httpClient.SendAsync(req);
+        res.EnsureSuccessStatusCode();
+        var resContent = await res.Content.ReadAsStringAsync();
+        var roles = JsonSerializer.Deserialize<List<GetRoleDto>>(resContent, CamelCaseJsonSerializer);
+        return roles ?? [];
     }
 
     private HttpRequestMessage CreateRequest(string endpoint, HttpMethod httpMethod, object? content = null)

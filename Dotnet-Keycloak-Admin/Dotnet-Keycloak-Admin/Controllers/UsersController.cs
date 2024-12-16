@@ -45,14 +45,14 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<ActionResult> ResetPassword(string id, [FromBody] ResetPasswordRequest req)
     {
-        await _keycloakAdminService.ResetPassword(id, req.Credential);
+        await _keycloakAdminService.ResetPasswordAsync(id, req.Credential);
         return NoContent();
     }
 
     [HttpGet("{id}/roles")]
     public async Task<ActionResult<GetUserRolesResponse>> GetUserRoles(string id)
     {
-        var res = await _keycloakAdminService.GetUserRoles(id);
+        var res = await _keycloakAdminService.GetUserRoleMappingsAsync(id);
         return Ok(res);
     }
 }
