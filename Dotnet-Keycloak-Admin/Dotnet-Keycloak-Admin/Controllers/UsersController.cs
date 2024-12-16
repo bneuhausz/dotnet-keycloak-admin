@@ -55,4 +55,20 @@ public class UsersController : ControllerBase
         var res = await _keycloakAdminService.GetUserRoleMappingsAsync(id);
         return Ok(res);
     }
+
+    [HttpPost("{id}/roles")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> AssignRoleToUser(string id, [FromBody] AssignRoleRequest req)
+    {
+        await _keycloakAdminService.AssignRoleToUserAsync(id, req);
+        return NoContent();
+    }
+
+    [HttpDelete("{id}/roles")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<ActionResult> RemoveRoleFromUser(string id, [FromBody] AssignRoleRequest req)
+    {
+        await _keycloakAdminService.RemoveRoleFromUserAsync(id, req);
+        return NoContent();
+    }
 }

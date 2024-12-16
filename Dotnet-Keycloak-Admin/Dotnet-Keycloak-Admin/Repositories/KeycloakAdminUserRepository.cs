@@ -71,7 +71,7 @@ public class KeycloakAdminUserRepository : IKeycloakAdminUserRepository
         res.EnsureSuccessStatusCode();
     }
 
-    public async Task ResetPassword(string id, CredentialDto credential)
+    public async Task ResetPasswordAsync(string id, CredentialDto credential)
     {
         var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/reset-password", HttpMethod.Put, credential);
         var res = await _httpClient.SendAsync(req);
@@ -108,14 +108,30 @@ public class KeycloakAdminUserRepository : IKeycloakAdminUserRepository
         return roles ?? [];
     }
 
-    public async Task<List<GetRoleDto>> GetAvailableClientRolesAsync(string userId, string clientId)
+    public async Task<List<GetRoleDto>> GetAvailableClientRolesAsync(string id, string clientId)
     {
-        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{userId}/role-mappings/clients/{clientId}/available", HttpMethod.Get);
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/role-mappings/clients/{clientId}/available", HttpMethod.Get);
         var res = await _httpClient.SendAsync(req);
         res.EnsureSuccessStatusCode();
         var resContent = await res.Content.ReadAsStringAsync();
         var roles = JsonSerializer.Deserialize<List<GetRoleDto>>(resContent, CamelCaseJsonSerializer);
         return roles ?? [];
+    }
+
+    public async Task AssignRoleToUserAsync(string id, AssignRoleDto role)
+    {
+        var client = await GetClientAsync();
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/role-mappings/clients/{client.Id}", HttpMethod.Post, new[] { role });
+        var res = await _httpClient.SendAsync(req);
+        res.EnsureSuccessStatusCode();
+    }
+
+    public async Task RemoveRoleFromUserAsync(string id, AssignRoleDto role)
+    {
+        var client = await GetClientAsync();
+        var req = CreateRequest($"admin/realms/{_keycloakConfig.Realm}/users/{id}/role-mappings/clients/{client.Id}", HttpMethod.Delete, new[] { role });
+        var res = await _httpClient.SendAsync(req);
+        res.EnsureSuccessStatusCode();
     }
 
     private HttpRequestMessage CreateRequest(string endpoint, HttpMethod httpMethod, object? content = null)

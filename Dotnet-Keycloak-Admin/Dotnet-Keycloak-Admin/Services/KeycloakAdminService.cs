@@ -1,8 +1,10 @@
-﻿using Nbx.DotnetKeycloak.Admin.Dtos.User;
+﻿using Nbx.DotnetKeycloak.Admin.Dtos.Role;
+using Nbx.DotnetKeycloak.Admin.Dtos.User;
 using Nbx.DotnetKeycloak.Admin.Repositories.Interfaces;
 using Nbx.DotnetKeycloak.Admin.Requests;
 using Nbx.DotnetKeycloak.Admin.Responses;
 using Nbx.DotnetKeycloak.Admin.Services.Interfaces;
+using System.Net;
 
 namespace Nbx.DotnetKeycloak.Admin.Services;
 
@@ -44,7 +46,7 @@ public class KeycloakAdminService : IKeycloakAdminService
     }
 
     public async Task ResetPasswordAsync(string id, CredentialDto credential) {
-        await _keycloakAdminRepository.ResetPassword(id, credential);
+        await _keycloakAdminRepository.ResetPasswordAsync(id, credential);
     }
 
     public async Task<GetUserRolesResponse> GetUserRoleMappingsAsync(string id)
@@ -66,5 +68,14 @@ public class KeycloakAdminService : IKeycloakAdminService
 
         var res = new GetUserRolesResponse(userMappedRoles);
         return res;
+    }
+
+    public async Task AssignRoleToUserAsync(string id, AssignRoleRequest req)
+    {
+        await _keycloakAdminRepository.AssignRoleToUserAsync(id, req.Role);
+    }
+    public async Task RemoveRoleFromUserAsync(string id, AssignRoleRequest req)
+    {
+        await _keycloakAdminRepository.RemoveRoleFromUserAsync(id, req.Role);
     }
 }

@@ -12,8 +12,10 @@ public interface IKeycloakAdminUserRepository
     Task<UserRepresentation?> GetUserByIdAsync(string id);
     Task CreateUserAsync(CreateUserDto user);
     Task ToggleUserEnabledAsync(string id);
-    Task ResetPassword(string id, CredentialDto credential);
+    Task ResetPasswordAsync(string id, CredentialDto credential);
     Task<GetClientDto> GetClientAsync();
     Task<List<GetRoleDto>> GetUserClientRolesAsync(string id, string clientId);
-    Task<List<GetRoleDto>> GetAvailableClientRolesAsync(string userId, string clientId);
+    Task<List<GetRoleDto>> GetAvailableClientRolesAsync(string id, string clientId);
+    Task AssignRoleToUserAsync(string id, AssignRoleDto role);
+    Task RemoveRoleFromUserAsync(string id, AssignRoleDto role);
 }
